@@ -21,7 +21,7 @@ if (GlobalSetting.enable_cors && GlobalSetting.cors_origin.present?) || GlobalSe
       else
         # multisite CORS
         config = ActiveRecord::Base.connection_pool.spec.config
-        site_origins = config[:cors_origin] ? config[:cors_origin].split(',') : nil
+        site_origins = (config && config[:cors_origin]) ? config[:cors_origin].split(',') : nil
 
         if site_origins
           if origin = env['HTTP_ORIGIN']
