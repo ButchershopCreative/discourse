@@ -39,6 +39,23 @@ class UsersController < ApplicationController
     end
   end
 
+  def card_badge
+  end
+
+  def update_card_badge
+    user = fetch_user_from_params
+    guardian.ensure_can_edit!(user)
+
+    user_badge = UserBadge.find_by(id: params[:user_badge_id].to_i)
+    if user_badge && user_badge.user == user && user_badge.badge.image.present?
+      user.user_profile.update_column(:card_image_badge_id, user_badge.badge.id)
+    else
+      user.user_profile.update_column(:card_image_badge_id, nil)
+    end
+
+    render nothing: true
+  end
+
   def user_preferences_redirect
     redirect_to email_preferences_path(current_user.username_lower)
   end
@@ -77,7 +94,7 @@ class UsersController < ApplicationController
   end
 
   def check_emails
-    user = fetch_user_from_params
+    user = fetch_user_from_params(include_inactive: true)
     guardian.ensure_can_check_emails!(user)
 
     StaffActionLogger.new(current_user).log_check_email(user, context: params[:context])
@@ -461,6 +478,8 @@ class UsersController < ApplicationController
         upload_avatar_for(user, upload)
       when "profile_background"
         upload_profile_background_for(user.user_profile, upload)
+      when "card_background"
+        upload_card_background_for(user.user_profile, upload)
       end
     else
       render status: 422, text: upload.errors.full_messages
@@ -490,6 +509,8 @@ class UsersController < ApplicationController
     image_type = params.require(:image_type)
     if image_type == 'profile_background'
       user.user_profile.clear_profile_background
+    elsif image_type == 'card_background'
+      user.user_profile.clear_card_background
     else
       raise Discourse::InvalidParameters.new(:image_type)
     end
@@ -501,7 +522,7 @@ class UsersController < ApplicationController
     @user = fetch_user_from_params
     guardian.ensure_can_delete_user!(@user)
 
-    UserDestroyer.new(current_user).destroy(@user, {delete_posts: true, context: params[:context]})
+    UserDestroyer.new(current_user).destroy(@user, { delete_posts: true, context: params[:context] })
 
     render json: success_json
   end
@@ -547,8 +568,11 @@ class UsersController < ApplicationController
 
     def upload_profile_background_for(user_profile, upload)
       user_profile.upload_profile_background(upload)
-      # TODO: add a resize job here
+      render json: { url: upload.url, width: upload.width, height: upload.height }
+    end
 
+    def upload_card_background_for(user_profile, upload)
+      user_profile.upload_card_background(upload)
       render json: { url: upload.url, width: upload.width, height: upload.height }
     end
 

@@ -26,7 +26,6 @@
 }
 
 .modal.fade {
-  -webkit-transition: opacity .3s linear, top .3s ease-out;
   transition: opacity .3s linear, top .3s ease-out;
   top: -25%;
 }
@@ -36,7 +35,7 @@
 .modal-body {
   overflow-y: auto;
   max-height: 400px;
-  padding: 10px 0 10px 15px;
+  padding: 10px 0 10px 10px;
   width: 95%;
 }
 

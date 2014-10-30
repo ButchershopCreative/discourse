@@ -90,6 +90,7 @@ nb_NO:
       facebook: 'del denne lenken på Facebook'
       google+: 'del denne lenken på Google+'
       email: 'del denne lenken i en e-post'
+    topic_admin_menu: "admin-handlinger for emne"
     edit: 'rediger tittelen og kategorien til dette emnet'
     not_implemented: "Den funksjonen har ikke blitt implementert ennå, beklager!"
     no_value: "Nei"
@@ -122,21 +123,10 @@ nb_NO:
     daily: "daglig"
     weekly: "ukentlig"
     every_two_weeks: "annenhver uke"
+    max_of_count: "maksimum av {{count}}"
     character_count:
       one: "{{count}} tegn"
       other: "{{count}} tegn"
-    in_n_seconds:
-      one: "på 1 sekund"
-      other: "på {{count}} sekunder"
-    in_n_minutes:
-      one: "på 1 minutt"
-      other: "om {{count}} minutter"
-    in_n_hours:
-      one: "på 1 time"
-      other: "på {{count}} timer"
-    in_n_days:
-      one: "på 1 dag"
-      other: "på {{count}} dager"
     suggested_topics:
       title: "Anbefalte emner"
     about:
@@ -148,10 +138,6 @@ nb_NO:
       stat:
         all_time: "Gjennom tidene"
         last_7_days: "Siste 7 dager"
-      like_count: "Antall liker"
-      topic_count: "Antall emner"
-      post_count: "Antall innlegg"
-      user_count: "Antall brukere"
     bookmarks:
       not_logged_in: "beklager, du må være innlogget for å kunne bokmerke innlegg"
       created: "du har bokmerket dette innlegget"
@@ -345,7 +331,7 @@ nb_NO:
         authenticated: "Din e-post har blitt autentisert av {{provider}}."
         frequency: "Vi sender deg bare en e-post om vi ikke har sett deg nylig og du ikke allerede har sett det vi varsler deg om."
       name:
-        title: "Naavn"
+        title: "Navn"
         instructions: "Ditt fulle navn."
         too_short: "Navnet ditt er for kort."
         ok: "Navnet ditt ser bra ut."
@@ -420,6 +406,8 @@ nb_NO:
         expired: "Denne invitasjonen har utløpt"
         rescind: "Fjern"
         rescinded: "Invitasjon fjernet"
+        reinvite: "Send invitasjon igjen"
+        reinvited: "Invitasjon sendt igjen"
         time_read: "Lesetid"
         days_visited: "Dager besøkt"
         account_age_days: "Kontoalder i dager"
@@ -511,6 +499,7 @@ nb_NO:
     created_lowercase: 'opprettet'
     trust_level: 'Tillitsnivå'
     search_hint: 'brukernavn'
+    search_hint_admin: 'brukernavn eller email'
     create_account:
       title: "Opprett ny konto"
       failed: "Noe gikk galt, kanskje denne e-postadressen allerede er registrert. Prøv lenke for glemt passord"
@@ -572,7 +561,7 @@ nb_NO:
       drafts_offline: "utkast offline"
       min_length:
         need_more_for_title: "{{n}} igen for tittelen"
-        need_more_for_reply: "{{n}} igjen for svaret"
+        need_more_for_reply: "{{n}} gjenstår"
       error:
         title_missing: "Tittel er påkrevd"
         title_too_short: "Tittel må være minst {{min}} tegn"
@@ -596,7 +585,6 @@ nb_NO:
       view_new_post: "Se ditt nye innlegg."
       saving: "Lagrer..."
       saved: "Lagret!"
-      saved_draft: "Du har et pågående utkast. Velg dette området for å gjennoppta redigeringen."
       uploading: "Laster opp..."
       show_preview: 'se forhånsvisning &raquo;'
       hide_preview: '&laquo; skjul forhåndsvisning'
@@ -626,10 +614,15 @@ nb_NO:
       help: "Hjelp for redigering i Markdown"
       toggler: "gjem eller vis redigeringspanelet"
       admin_options_title: "Valgfrie emne-instillinger for ansatte"
-      auto_close_label: "Auto-lås emnet etter:"
-      auto_close_units: "dager"
-      auto_close_examples: 'Oppgi absolutt tid eller antall timer — 24, 17:00, 2013-11-22 14:00'
-      auto_close_error: "Vennligst oppgi en gyldig verdi."
+      auto_close:
+        label: "Tid for auto-lukking av emnet:"
+        error: "Vennligst skriv en gyldig verdi."
+        based_on_last_post: "Ikke lukk før den siste posten i emnet er minst så gammel."
+        all:
+          examples: 'Før inn antall timer (24), absolutt tid (17:30) eller tidsstempel (2013-11-22 14:00).'
+        limited:
+          units: "(# timer)"
+          examples: 'Før inn antall timer (24).'
     notifications:
       title: "varsler når @brukernavn nevnes, svar til dine innlegg og emner, private meldinger, osv"
       none: "Du har ingen varsler akkurat nå."
@@ -772,6 +765,7 @@ nb_NO:
       jump_reply_down: hopp til senere svar
       deleted: "Emnet har blitt slettet"
       auto_close_notice: "Dette emnet vil automatisk lukkes %{timeLeft}."
+      auto_close_notice_based_on_last_post: "Dette emnet vil bli lukket %{duration} etter det siste innlegget."
       auto_close_title: 'Auto-Lukk Innstillinger'
       auto_close_save: "Lagre"
       auto_close_remove: "Ikke lukk dette emnet automatisk"
@@ -795,8 +789,8 @@ nb_NO:
           '2_4': 'Du vil motta varsler fordi du svarte på dette emnet.'
           '2_2': 'Du vil motta varsler fordi du følger dette emnet.'
           '2': 'Du vil motta varsler fordi du <a href="/users/{{username}}/preferences">read this topic</a>.'
-          '1_2': 'Du vil bli varslet bare om noen nevner ditt @brukernavn eller svarer på ditt innlegg.'
-          '1': 'Du vil bli varslet bare om noen nevner ditt @brukernavn eller svarer på ditt innlegg.'
+          '1_2': 'Du vil bli varslet hvis noen nevner ditt @navn eller svarer på din post.'
+          '1': 'Du vil bli varslet om noen nevner ditt @navn eller svarer på din post.'
           '0_7': 'Du ignorerer alle varsler i denne kategorien.'
           '0_2': 'Du ignorerer alle varsler på dette emnet.'
           '0': 'Du ignorerer alle varsler på dette emnet.'
@@ -808,16 +802,16 @@ nb_NO:
           description: "Du vil bli varslet om hvert nye innlegg i dette emnet. Antallet uleste og nye emner vil også vises ved siden av emnets oppføring."
         tracking_pm:
           title: "Følger"
-          description: "Antallet uleste og nye innlegg vil vises ved denne private meldingens oppføring. Du vil bli varslet kun hvis noen nevner ditt @navn eller svarer på ditt innlegg."
+          description: "En opptelling av uleste og nye poster vil visest ved siden av den private meldingen. Du vil bli varslet om noen nevner ditt @navn eller svarer på din post."
         tracking:
           title: "Følger"
-          description: "Antallet uleste og nye innlegg vil vises ved emnets oppføring. Du vil kun bli varslet hvis noen nevner ditt @navn eller svarer på ditt innegg."
+          description: "En opptelling av uleste og nye poster vil visest ved siden av emnet. Du vil bli varslet om noen nevner ditt @navn eller svarer på din post."
         regular:
           title: "Aktivt medlem"
-          description: "du vil bli varslet bare om noen nevner ditt @brukernavn eller svarer på ditt innlegg."
+          description: "Du vil bli varslet om noen nevnet ditt @navn eller svarer på din post."
         regular_pm:
           title: "Aktivt medlem"
-          description: "Du vil kun bli varslet hvis noen nevner ditt @navn eller svarer på innlegget ditt i den private meldingen."
+          description: "Du vil bli varslet om noen nevnet ditt @navn eller svarer på din post i den private meldingen."
         muted_pm:
           title: "Dempet"
           description: "Du vil aldri bli varslet om noe relatert til denne private meldingen."
@@ -947,6 +941,7 @@ nb_NO:
         edit: "Beklager, det oppstod en feil ved redigeringen av ditt innlegg. Vennligst prøv igjen."
         upload: "Sorry, there was an error uploading that file. Please try again."
         attachment_too_large: "Beklager, filen du prøver å laste opp er for stor (maksimal størrelsen er {{max_size_kb}}kb)."
+        file_too_large: "Beklager, filen du prøver å laste opp er for stor (maximum size is {{max_size_kb}}kb)"
         too_many_uploads: "Beklager, du kan bare laste opp ett bilde om gangen."
         upload_not_authorized: "Beklager, filen du prøver å laste opp er ikke godkjent (godkjente filtyper: {{authorized_extensions}})."
         image_upload_not_allowed_for_new_user: "Beklager, nye brukere kan ikke laste opp bilder"
@@ -1090,6 +1085,8 @@ nb_NO:
           previous: "Forrige revisjon"
           next: "Neste revisjon"
           last: "Siste revisjon"
+          hide: "Skjul revisjon"
+          show: "Vis revisjon"
           comparing_previous_to_current_out_of_total: "<strong>{{previous}}</strong> mot <strong>{{current}}</strong> / {{total}}"
         displays:
           inline:
@@ -1159,7 +1156,7 @@ nb_NO:
           description: "Du vil automatisk følge alle nye emner i disse kategoriene. En teller for antall uleste og nye innlegg vil vises ved siden av emnet."
         regular:
           title: "Vanlig"
-          description: "Du vil kun bli varslet hvis noen nevner ditt @navn eller svarer på ditt innlegg."
+          description: "Du vil bli varslet om noen nevner ditt @navn eller svarer på din post."
         muted:
           title: "Dempet"
           description: "Du vil ikke bli varslet om noe vedrørende disse emnene i disse kategoriene og de vil ikke vises i din ulest-liste."
@@ -1171,6 +1168,8 @@ nb_NO:
       delete_spammer: "Slett spammer"
       delete_confirm: "Du er i ferd med å slette <b>%{posts}</b> innlegg og <b>%{topics}</b> emner av denne brukeren, slette brukerens konto, blokkere registrering fra brukerens IP-adresse <b>%{ip_address}</b>, og legge brukerens e-postadresse <b>%{email}</b> i en permanent svarteliste. Er du sikker på at denne brukeren virkelig er en spammer?"
       yes_delete_spammer: "Ja, slett spammer"
+      ip_address_missing: "(N/A)"
+      hidden_email_address: "(skjult)"
       submit_tooltip: "Rapporter privat"
       take_action_tooltip: "Oppnå rapporteringsterskel umiddelbart, i stedet for å vente på flere rapporteringer."
       cant: "Beklager, du kan ikke rapportere dette innlegget nå."
@@ -1211,6 +1210,12 @@ nb_NO:
     posts: "Innlegg"
     posts_lowercase: "innlegg"
     posts_long: "{{number}} innlegg i dette emnet"
+    posts_likes_MF: |
+      Dette emnet har {count, plural, one {1 post} other {# posts}} {ratio, select,
+        lavt {with a high like to post ratio}
+        medium {with a very high like to post ratio}
+        høyt {with an extremely high like to post ratio}
+        andre {}}
     original_post: "Originalt Innlegg"
     views: "Visninger"
     views_lowercase: "visninger"
@@ -1252,12 +1257,12 @@ nb_NO:
           other: "Ulest ({{count}})"
         help: "emner du for øyeblikket følger eller sporer med uleste innlegg"
         lower_title_with_count:
-          one: "1 ulest"
-          other: "{{count}} uleste"
+          one: "919b31115946cb42960c0b286e3d5fae_tr"
+          other: "d17f3dd2f82a108995bff08a2571e0ca_tr"
       new:
         lower_title_with_count:
-          one: "1 ny"
-          other: "{{count}} nye"
+          one: "60da5065601d11130790bf316684b472_tr"
+          other: "6ef788ca58c41ba2efc880c0c0df1382_tr"
         lower_title: "ny"
         title:
           zero: "Nye"
@@ -1461,6 +1466,7 @@ nb_NO:
             text: "Sikkerhetskopiering"
             title: "Opprett en sikkerhetskopiering"
             confirm: "Vil du starte en ny sikkerhetskopiering?"
+            without_uploads: "Ja (ikke inkluder filer)"
           download:
             text: "Last ned"
             title: "Last ned sikkerhetskopi"
@@ -1551,6 +1557,9 @@ nb_NO:
           love:
             name: 'liker'
             description: "Fargen til Liker-knappen."
+          wiki:
+            name: 'wiki'
+            description: "Grunnfarge brukt for bakgrunnen i wiki-poster."
       email:
         title: "E-post"
         settings: "Instillinger"
@@ -1593,6 +1602,8 @@ nb_NO:
         last_match_at: "Siste treff"
         match_count: "Treff"
         ip_address: "IP"
+        topic_id: "Emne ID"
+        post_id: "Innlegg ID"
         delete: 'Slett'
         edit: 'Endre'
         save: 'Lagre'
@@ -1627,16 +1638,21 @@ nb_NO:
             grant_badge: "tildel merke"
             revoke_badge: "tilbakedra merke"
             check_email: "sjekk e-post"
+            delete_topic: "slett emne"
+            delete_post: "slett innlegg"
         screened_emails:
+          title: "Kontrollerte Emails"
           description: "Når noen forsøker å lage en ny konto, vil de følgende e-postadressene bli sjekket, og registreringen vil bli blokkert, eller en annen handling vil bli utført."
           email: "E-postadresse"
           actions:
             allow: "Tillat"
         screened_urls:
+          title: "Kontrollerte URLs"
           description: "URLer listet her ble brukt i innlegg av brukere som har blitt identifisert som spammere."
           url: "URL"
           domain: "Domene"
         screened_ips:
+          title: "Kontrollerte IPs"
           description: 'IP-adresser som blir fulgt. Benytt "Tillat" for å hvitliste IP-adresser.'
           delete_confirm: "Er du sikker på at du vil fjerne regelen for %{ip_address}?"
           actions:
@@ -1695,6 +1711,7 @@ nb_NO:
         not_verified: "Uverifisert"
         check_email:
           title: "Vis denne brukerens e-postadresse"
+          text: "Vis"
       user:
         suspend_failed: "Noe gikk galt ved å bannlyse denne brukeren {{error}}"
         unsuspend_failed: "Noe gikk galt ved å gjeninsette denne brukeren {{error}}"
@@ -1797,6 +1814,8 @@ nb_NO:
           flagged_by_users: "Brukere som rapporterte"
           likes_given: "Likes tildelt"
           likes_received: "Likes mottatt"
+          likes_received_days: "Likes Mottatt: unike dager"
+          likes_received_users: "Likes Mottatt: unike brukere"
           qualifies: "Kvalifiserer til tillitsnivå 3."
           does_not_qualify: "Kvalifiserer ikke til tillitsnivå 3."
           will_be_promoted: "Vil snart forfremmes."
@@ -1813,15 +1832,25 @@ nb_NO:
           external_avatar_url: "URL til profilbilde"
       user_fields:
         title: "Brukerfelter"
+        help: "Legg til felt som dine brukere kan fylle ut."
         create: "Opprett brukerfelt"
         untitled: "Uten tittel"
         name: "Feltnavn"
         type: "Felttype"
+        description: "Beskrivelse av felt"
         save: "Lagre"
         edit: "Endre"
         delete: "Slett"
         cancel: "Avbryt"
         delete_confirm: "Er du sikker på at du vil fjerne brukerfeltet?"
+        required:
+          title: "Nødvendig ved registrering?"
+          enabled: "nødvendig"
+          disabled: "ikke obligatorisk"
+        editable:
+          title: "Kan det endres etter registrering?"
+          enabled: "kan endres"
+          disabled: "kan ikke endres"
         field_types:
           text: 'Tekstfelt'
           confirm: 'Bekreftelse'
@@ -1904,6 +1933,7 @@ nb_NO:
           error_help: "Se følgende lenker for hjelp til spørringer for merker."
           bad_count_warning:
             header: "ADVARSEL!"
+            text: "Det er manglende grant samples. Dette skjer når badge søket returnerer bruker-IDer eller post IDer som ikke eksisterer. Dette kan føre til uventede resultater senere - vennligst dobbeltsjekk søket ditt."
           grant_count:
             zero: "Ingen merker klare for tildeling"
             one: "<b>1</b> merke kan bli tildelt."
@@ -1977,7 +2007,6 @@ nb_NO:
         one: "1 tildelt"
         other: "%{count} tildelt"
       select_badge_for_title: Velg et merke å bruke som din tittel
-      no_title: "<ingen tittel>"
       badge_grouping:
         getting_started:
           name: Kom i gang

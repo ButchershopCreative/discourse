@@ -77,12 +77,13 @@ button {
   border: 1px solid scale-color-diff();
   position: absolute;
   text-align: left;
-  bottom: -26px;
-  left: 0;
+  bottom: 0;
+  left: 135px;
   z-index: 1000;
   display: none;
 
   h3 {
+    margin-top: 0;
     color: $primary;
     font-size: 1em;
   }
@@ -110,15 +111,23 @@ button {
   }
 }
 
-
 .reply-new {
   display: none;
 }
 
 .post-actions {
-  margin-left: 10px;
-  margin-top: 2px;
   display: inline-block;
+  width: 100%;
+}
+
+.post-action {
+  float: right;
+  margin-right: 10px;
+  clear: right;
+}
+
+.post-action .relative-date {
+  margin-left: 5px;
 }
 
 a.reply-to-tab {
@@ -140,6 +149,7 @@ a.star {
   padding-top: 5px;
   padding-bottom: 0px;
   clear: both;
+  position: relative;
 }
 
 .topic-map {
@@ -192,10 +202,15 @@ a.star {
       line-height: 14px;
     }
 
-    /* limit to one line of avatars for now */
-    height:24px;
-    overflow:hidden !important; // otherwise parent mobile styles conflict
   }
+
+  /* in expanded avatar view, limit to one line for now */
+  .avatars.clearfix {
+    height:40px;
+    overflow:hidden;
+    margin-left: 10px;
+  }
+
 
   .avatar {
     float: left;
@@ -401,14 +416,7 @@ iframe {
   margin-top: -20px;
 }
 
-.post-action {
-  float:right;
-  margin-right: 10px;
-}
 
-.post-action .relative-date {
-  margin-left: 5px;
-}
 
 .deleted {
 background-color: scale-color($danger, $lightness: 75%);
@@ -446,8 +454,7 @@ blockquote > *:last-child {
 
 .gutter { display: none; }
 
-.posts-wrapper {  position: relative;
-}
+.posts-wrapper {  position: relative; }
 
 .topic-body.highlighted {
   background-color: scale-color($tertiary, $lightness: 75%);

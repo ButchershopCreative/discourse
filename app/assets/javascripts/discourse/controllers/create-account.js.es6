@@ -70,28 +70,13 @@ export default DiscourseController.extend(ModalFunctionality, {
     return I18n.t('user.password.instructions', {count: Discourse.SiteSettings.min_password_length});
   }.property(),
 
-  // Validate the name
+  // Validate the name. It's not required.
   nameValidation: function() {
-    // If blank, fail without a reason
-    if (this.blank('accountName')) return Discourse.InputValidation.create({ failed: true });
-
     if (this.get('accountPasswordConfirm') === 0) {
       this.fetchConfirmationValue();
     }
 
-    // If too short
-    if (this.get('accountName').length < 3) {
-      return Discourse.InputValidation.create({
-        failed: true,
-        reason: I18n.t('user.name.too_short')
-      });
-    }
-
-    // Looks good!
-    return Discourse.InputValidation.create({
-      ok: true,
-      reason: I18n.t('user.name.ok')
-    });
+    return Discourse.InputValidation.create({ok: true});
   }.property('accountName'),
 
   // Check the email address
@@ -364,7 +349,7 @@ export default DiscourseController.extend(ModalFunctionality, {
         if (result.success) {
           // Trigger the browser's password manager using the hidden static login form:
           var $hidden_login_form = $('#hidden-login-form');
-          $hidden_login_form.find('input[name=username]').val(attrs.accountName);
+          $hidden_login_form.find('input[name=username]').val(attrs.accountUsername);
           $hidden_login_form.find('input[name=password]').val(attrs.accountPassword);
           $hidden_login_form.find('input[name=redirect]').val(Discourse.getURL('/users/account-created'));
           $hidden_login_form.submit();

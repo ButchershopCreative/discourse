@@ -1,4 +1,4 @@
-var ApplicationRoute = Em.Route.extend({
+var ApplicationRoute = Discourse.Route.extend({
 
   siteTitle: Discourse.computed.setting('title'),
 
@@ -20,7 +20,7 @@ var ApplicationRoute = Em.Route.extend({
     },
 
     expandUser: function(user) {
-      this.controllerFor('user-expansion').show(user.get('username'), user.get('uploaded_avatar_id'));
+      this.controllerFor('user-card').show(user.get('username'), user.get('uploaded_avatar_id'));
       return true;
     },
 
@@ -88,6 +88,16 @@ var ApplicationRoute = Em.Route.extend({
 
     showKeyboardShortcutsHelp: function() {
       Discourse.Route.showModal(this, 'keyboardShortcutsHelp');
+    },
+
+    showSearchHelp: function() {
+      var self = this;
+
+      // TODO: @EvitTrout how do we get a loading indicator here?
+      Discourse.ajax("/static/search_help.html", { dataType: 'html' }).then(function(html){
+        Discourse.Route.showModal(self, 'searchHelp', html);
+      });
+
     },
 
 

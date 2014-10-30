@@ -6,7 +6,7 @@
   @namespace Discourse
   @module Discourse
 **/
-Discourse.Route = Em.Route.extend({
+Discourse.Route = Ember.Route.extend({
 
   /**
     NOT called every time we enter a route on Discourse.
@@ -19,6 +19,10 @@ Discourse.Route = Em.Route.extend({
   activate: function() {
     this._super();
     Em.run.scheduleOnce('afterRender', Discourse.Route, 'cleanDOM');
+  },
+
+  _refreshTitleOnce: function() {
+    this.send('_collectTitleTokens', []);
   },
 
   actions: {
@@ -40,7 +44,7 @@ Discourse.Route = Em.Route.extend({
     },
 
     refreshTitle: function() {
-      this.send('_collectTitleTokens', []);
+      Ember.run.once(this, this._refreshTitleOnce);
     }
   },
 

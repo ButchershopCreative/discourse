@@ -81,6 +81,9 @@ Discourse::Application.routes.draw do
       get "tl3_requirements"
     end
 
+
+    post "users/sync_sso" => "users#sync_sso", constraints: AdminConstraint.new
+
     resources :impersonate, constraints: AdminConstraint.new
 
     resources :email do
@@ -236,6 +239,10 @@ Discourse::Application.routes.draw do
   post "users/:username/preferences/user_image" => "users#upload_user_image", constraints: {username: USERNAME_ROUTE_FORMAT}
   delete "users/:username/preferences/user_image" => "users#destroy_user_image", constraints: {username: USERNAME_ROUTE_FORMAT}
   put "users/:username/preferences/avatar/pick" => "users#pick_avatar", constraints: {username: USERNAME_ROUTE_FORMAT}
+  get "users/:username/preferences/card-badge" => "users#card_badge", constraints: {username: USERNAME_ROUTE_FORMAT}
+  put "users/:username/preferences/card-badge" => "users#update_card_badge", constraints: {username: USERNAME_ROUTE_FORMAT}
+
+
   get "users/:username/invited" => "users#invited", constraints: {username: USERNAME_ROUTE_FORMAT}
   post "users/action/send_activation_email" => "users#send_activation_email"
   get "users/:username/activity" => "users#show", constraints: {username: USERNAME_ROUTE_FORMAT}
@@ -249,10 +256,8 @@ Discourse::Application.routes.draw do
   get "users/:username/badges_json" => "user_badges#username"
 
   post "user_avatar/:username/refresh_gravatar" => "user_avatars#refresh_gravatar"
-  get "letter_avatar/:username/:size/:version.png" => "user_avatars#show_letter",
-      format: false, constraints: {hostname: /[\w\.-]+/}
-  get "user_avatar/:hostname/:username/:size/:version.png" => "user_avatars#show",
-      format: false, constraints: {hostname: /[\w\.-]+/}
+  get "letter_avatar/:username/:size/:version.png" => "user_avatars#show_letter", format: false, constraints: { hostname: /[\w\.-]+/ }
+  get "user_avatar/:hostname/:username/:size/:version.png" => "user_avatars#show", format: false, constraints: { hostname: /[\w\.-]+/ }
 
   get "uploads/:site/:id/:sha.:extension" => "uploads#show", constraints: {site: /\w+/, id: /\d+/, sha: /[a-z0-9]{15,16}/i, extension: /\w{2,}/}
   get "uploads/:site/:sha" => "uploads#show", constraints: { site: /\w+/, sha: /[a-z0-9]{40}/}
@@ -269,6 +274,10 @@ Discourse::Application.routes.draw do
     get 'counts'
   end
 
+  # In case people try the wrong URL
+  get '/group/:id', to: redirect('/groups/%{id}')
+  get '/group/:id/members', to: redirect('/groups/%{id}/members')
+
   resources :posts do
     put "bookmark"
     put "wiki"
@@ -276,7 +285,10 @@ Discourse::Application.routes.draw do
     put "rebake"
     put "unhide"
     get "replies"
-    get "revisions/:revision" => "posts#revisions"
+    get "revisions/latest" => "posts#latest_revision"
+    get "revisions/:revision" => "posts#revisions", constraints: { revision: /\d+/ }
+    put "revisions/:revision/hide" => "posts#hide_revision", constraints: { revision: /\d+/ }
+    put "revisions/:revision/show" => "posts#show_revision", constraints: { revision: /\d+/ }
     put "recover"
     collection do
       delete "destroy_many"
@@ -285,6 +297,7 @@ Discourse::Application.routes.draw do
 
   get "notifications" => "notifications#recent"
   get "notifications/history" => "notifications#history"
+  put "notifications/reset-new" => 'notifications#reset_new'
 
   match "/auth/:provider/callback", to: "users/omniauth_callbacks#complete", via: [:get, :post]
   match "/auth/failure", to: "users/omniauth_callbacks#failure", via: [:get, :post]
@@ -313,26 +326,26 @@ Discourse::Application.routes.draw do
   get "popular" => "list#popular_redirect"
 
   resources :categories, :except => :show
-  get "category/:id/show" => "categories#show"
   post "category/uploads" => "categories#upload"
   post "category/:category_id/move" => "categories#move"
-  get "category/:category.rss" => "list#category_feed", format: :rss
-  get "category/:parent_category/:category.rss" => "list#category_feed", format: :rss
-  get "category/:category" => "list#category_latest"
-  get "category/:category/none" => "list#category_none_latest"
-  get "category/:parent_category/:category" => "list#parent_category_category_latest"
   post "category/:category_id/notifications" => "categories#set_notifications"
 
-  get "top" => "list#top"
-  get "category/:category/l/top" => "list#category_top", as: "category_top"
-  get "category/:category/none/l/top" => "list#category_none_top", as: "category_none_top"
-  get "category/:parent_category/:category/l/top" => "list#parent_category_category_top", as: "parent_category_category_top"
+  get "c/:id/show" => "categories#show"
+  get "c/:category.rss" => "list#category_feed", format: :rss
+  get "c/:parent_category/:category.rss" => "list#category_feed", format: :rss
+  get "c/:category" => "list#category_latest"
+  get "c/:category/none" => "list#category_none_latest"
+  get "c/:parent_category/:category" => "list#parent_category_category_latest"
+  get "c/:category/l/top" => "list#category_top", as: "category_top"
+  get "c/:category/none/l/top" => "list#category_none_top", as: "category_none_top"
+  get "c/:parent_category/:category/l/top" => "list#parent_category_category_top", as: "parent_category_category_top"
+
 
   TopTopic.periods.each do |period|
     get "top/#{period}" => "list#top_#{period}"
-    get "category/:category/l/top/#{period}" => "list#category_top_#{period}", as: "category_top_#{period}"
-    get "category/:category/none/l/top/#{period}" => "list#category_none_top_#{period}", as: "category_none_top_#{period}"
-    get "category/:parent_category/:category/l/top/#{period}" => "list#parent_category_category_top_#{period}", as: "parent_category_category_top_#{period}"
+    get "c/:category/l/top/#{period}" => "list#category_top_#{period}", as: "category_top_#{period}"
+    get "c/:category/none/l/top/#{period}" => "list#category_none_top_#{period}", as: "category_none_top_#{period}"
+    get "c/:parent_category/:category/l/top/#{period}" => "list#parent_category_category_top_#{period}", as: "parent_category_category_top_#{period}"
   end
 
   Discourse.anonymous_filters.each do |filter|
@@ -341,11 +354,14 @@ Discourse::Application.routes.draw do
 
   Discourse.filters.each do |filter|
     get "#{filter}" => "list##{filter}"
-    get "category/:category/l/#{filter}" => "list#category_#{filter}", as: "category_#{filter}"
-    get "category/:category/none/l/#{filter}" => "list#category_none_#{filter}", as: "category_none_#{filter}"
-    get "category/:parent_category/:category/l/#{filter}" => "list#parent_category_category_#{filter}", as: "parent_category_category_#{filter}"
+    get "c/:category/l/#{filter}" => "list#category_#{filter}", as: "category_#{filter}"
+    get "c/:category/none/l/#{filter}" => "list#category_none_#{filter}", as: "category_none_#{filter}"
+    get "c/:parent_category/:category/l/#{filter}" => "list#parent_category_category_#{filter}", as: "parent_category_category_#{filter}"
   end
 
+  get "category/*path" => "categories#redirect"
+
+  get "top" => "list#top"
   get "search" => "search#query"
 
   # Topics resource
@@ -406,6 +422,7 @@ Discourse::Application.routes.draw do
   get "/posts/:id/cooked" => "posts#cooked"
   get "/posts/:id/expand-embed" => "posts#expand_embed"
   get "/posts/:id/raw" => "posts#markdown_id"
+  get "/posts/:id/raw-email" => "posts#raw_email"
   get "raw/:topic_id(/:post_number)" => "posts#markdown_num"
 
   resources :invites do

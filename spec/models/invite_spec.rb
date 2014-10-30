@@ -40,8 +40,11 @@ describe Invite do
 
     context 'saved' do
       subject { Fabricate(:invite) }
-      its(:invite_key) { should be_present }
-      its(:email_already_exists) { should == false }
+
+      it "works" do
+        subject.invite_key.should be_present
+        subject.email_already_exists.should == false
+      end
 
       it 'should store a lower case version of the email' do
         subject.email.should == iceking
@@ -159,6 +162,33 @@ describe Invite do
     it "won't redeem an invalidated invite" do
       invite.invalidated_at = 1.day.ago
       invite.redeem.should be_blank
+    end
+
+    context 'enqueues a job to email "set password" instructions' do
+
+      it 'does not enqueue an email if sso is enabled' do
+        SiteSetting.stubs(:enable_sso).returns(true)
+        Jobs.expects(:enqueue).with(:invite_password_instructions_email, has_key(:username)).never
+        invite.redeem
+      end
+
+      it 'does not enqueue an email if local login is disabled' do
+        SiteSetting.stubs(:enable_local_logins).returns(false)
+        Jobs.expects(:enqueue).with(:invite_password_instructions_email, has_key(:username)).never
+        invite.redeem
+      end
+
+      it 'does not enqueue an email if the user has already set password' do
+        user = Fabricate(:user, email: invite.email, password_hash: "7af7805c9ee3697ed1a83d5e3cb5a3a431d140933a87fdcdc5a42aeef9337f81")
+        Jobs.expects(:enqueue).with(:invite_password_instructions_email, has_key(:username)).never
+        invite.redeem
+      end
+
+      it 'enqueues an email if all conditions are satisfied' do
+        Jobs.expects(:enqueue).with(:invite_password_instructions_email, has_key(:username))
+        invite.redeem
+      end
+
     end
 
     context "when inviting to groups" do

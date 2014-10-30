@@ -26,7 +26,7 @@ Discourse.Category = Discourse.Model.extend({
   }.property('id'),
 
   url: function() {
-    return Discourse.getURL("/category/") + Discourse.Category.slugFor(this);
+    return Discourse.getURL("/c/") + Discourse.Category.slugFor(this);
   }.property('name'),
 
   nameLower: function() {
@@ -98,12 +98,6 @@ Discourse.Category = Discourse.Model.extend({
     this.get("permissions").removeObject(permission);
     this.get("availableGroups").addObject(permission.group_name);
   },
-
-  // note, this is used in a data attribute, data attributes get downcased
-  //  to avoid confusion later on using this naming here.
-  description_text: function(){
-    return $("<div>" + this.get("description") + "</div>").text();
-  }.property("description"),
 
   permissions: function(){
     return Em.A([
@@ -280,7 +274,7 @@ Discourse.Category.reopenClass({
   },
 
   reloadById: function(id) {
-    return Discourse.ajax("/category/" + id + "/show.json").then(function (result) {
+    return Discourse.ajax("/c/" + id + "/show.json").then(function (result) {
       return Discourse.Category.create(result.category);
     });
   }

@@ -87,6 +87,15 @@ describe Search do
     end
   end
 
+  context 'inactive users' do
+    let!(:inactive_user) { Fabricate(:inactive_user, active: false) }
+    let(:result) { Search.execute('bruce') }
+
+    it 'does not return a result' do
+      result.users.length.should == 0
+    end
+  end
+
   context 'topics' do
     let(:post) { Fabricate(:post) }
     let(:topic) { post.topic}
@@ -170,7 +179,7 @@ describe Search do
     context 'security' do
 
       def result(current_user)
-        Search.execute('hello', guardian: current_user)
+        Search.execute('hello', guardian: Guardian.new(current_user))
       end
 
       it 'secures results correctly' do
@@ -319,8 +328,19 @@ describe Search do
       topic.closed = false
       topic.save
 
-      Search.execute('test status:closed').posts.length.should == 1
+      Search.execute('test status:archived').posts.length.should == 1
       Search.execute('test status:open').posts.length.should == 0
+
+      Search.execute('test status:noreplies').posts.length.should == 1
+
+      Search.execute('test in:likes', guardian: Guardian.new(topic.user)).posts.length.should == 0
+
+      Search.execute('test in:posted', guardian: Guardian.new(topic.user)).posts.length.should == 1
+
+      TopicUser.change(topic.user.id, topic.id, notification_level: TopicUser.notification_levels[:tracking])
+      Search.execute('test in:watching', guardian: Guardian.new(topic.user)).posts.length.should == 0
+      Search.execute('test in:tracking', guardian: Guardian.new(topic.user)).posts.length.should == 1
+
     end
 
     it 'can find by latest' do
